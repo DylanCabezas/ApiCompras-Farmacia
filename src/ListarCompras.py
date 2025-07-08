@@ -1,25 +1,33 @@
-import boto3, json
+import boto3
+import json
 from src.validarToken import validar_token
 
-dynamo = boto3.resource('dynamodb')
-tabla = dynamo.Table('t_compras-dev')  # usar ${stage} si deseas dinámico
+dynamodb = boto3.resource('dynamodb')
+tabla = dynamodb.Table('t_compras-dev')  # Ajusta según tu stage
 
 def handler(event, context):
     try:
-        headers = event['headers']
+        # Validar token
+        headers = event.get('headers', {})
         payload = validar_token(headers)
 
-        resp = tabla.query(
-            KeyConditionExpression="tenant_id = :t AND alumno_id = :a",
+        tenant_id = payload['tenant_id']
+        alumno_id = payload['alumno_id']
+
+        # Buscar todas las compras de este usuario
+        response = tabla.scan(
+            FilterExpression='tenant_id = :t AND alumno_id = :a',
             ExpressionAttributeValues={
-                ":t": payload['tenant_id'],
-                ":a": payload['alumno_id']
+                ':t': tenant_id,
+                ':a': alumno_id
             }
         )
 
+        compras = response.get("Items", [])
+
         return {
             'statusCode': 200,
-            'body': json.dumps(resp.get("Items", []))
+            'body': json.dumps(compras)
         }
 
     except Exception as e:
