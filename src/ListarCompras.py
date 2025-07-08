@@ -1,20 +1,24 @@
 import boto3
 import json
+from decimal import Decimal
 from src.validarToken import validar_token
 
 dynamodb = boto3.resource('dynamodb')
-tabla = dynamodb.Table('t_compras_dev')  # Ajusta según tu stage
+tabla = dynamodb.Table('t_compras_dev')
+
+def decimal_serializer(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError(f"Tipo no serializable: {type(obj)}")
 
 def handler(event, context):
     try:
-        # Validar token
         headers = event.get('headers', {})
         payload = validar_token(headers)
 
         tenant_id = payload['tenant_id']
         alumno_id = payload['alumno_id']
 
-        # Buscar todas las compras de este usuario
         response = tabla.scan(
             FilterExpression='tenant_id = :t AND alumno_id = :a',
             ExpressionAttributeValues={
@@ -27,7 +31,7 @@ def handler(event, context):
 
         return {
             'statusCode': 200,
-            'body': json.dumps(compras)
+            'body': json.dumps(compras, default=decimal_serializer)
         }
 
     except Exception as e:
