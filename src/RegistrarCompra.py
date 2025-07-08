@@ -2,33 +2,50 @@ import boto3
 import uuid
 import json
 import datetime
+from decimal import Decimal
 from src.validarToken import validar_token
 
+# Recurso DynamoDB
 dynamodb = boto3.resource('dynamodb')
-tabla = dynamodb.Table('t_compras-dev')  # Cambia el nombre si usas otro stage
+tabla = dynamodb.Table('t_compras-dev')  # Cambia a tu stage si es necesario
 
 def handler(event, context):
     try:
-        # Leer el body
+        # Leer body del evento
         body = event['body']
         if isinstance(body, str):
             data = json.loads(body)
         else:
             data = body
 
-        # Leer headers y validar token
+        # Obtener y validar token
         headers = event.get('headers', {})
-        payload = validar_token(headers)  # Devuelve tenant_id y alumno_id
+        payload = validar_token(headers)  # ← valida el token UUID desde DynamoDB
 
-        # Validar estructura del body
+        # Validar campo obligatorio
         if 'productos' not in data:
             return {
                 'statusCode': 400,
-                'body': json.dumps({'error': 'Falta campo productos'})
+                'body': json.dumps({'error': 'Falta el campo productos'})
             }
 
         productos = data['productos']
-        total = sum(p['precio'] * p['cantidad'] for p in productos)
+        productos_decimal = []
+        total = Decimal("0.0")
+
+        # Convertir a Decimal y calcular total
+        for p in productos:
+            precio = Decimal(str(p['precio']))
+            cantidad = Decimal(str(p['cantidad']))
+            subtotal = precio * cantidad
+            total += subtotal
+
+            productos_decimal.append({
+                'codigo': p['codigo'],
+                'nombre': p['nombre'],
+                'precio': precio,
+                'cantidad': cantidad
+            })
 
         # Crear objeto compra
         compra_id = str(uuid.uuid4())
@@ -39,7 +56,7 @@ def handler(event, context):
             'alumno_id': payload['alumno_id'],
             'compra_id': compra_id,
             'fecha': fecha,
-            'productos': productos,
+            'productos': productos_decimal,
             'total': total
         }
 
@@ -50,7 +67,21 @@ def handler(event, context):
             'statusCode': 200,
             'body': json.dumps({
                 'message': 'Compra registrada',
-                'data': item
+                'data': {
+                    'tenant_id': item['tenant_id'],
+                    'alumno_id': item['alumno_id'],
+                    'compra_id': item['compra_id'],
+                    'fecha': item['fecha'],
+                    'productos': [
+                        {
+                            'codigo': p['codigo'],
+                            'nombre': p['nombre'],
+                            'precio': float(p['precio']),
+                            'cantidad': float(p['cantidad'])
+                        } for p in productos_decimal
+                    ],
+                    'total': float(total)
+                }
             })
         }
 
