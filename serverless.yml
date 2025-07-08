@@ -1,0 +1,83 @@
+org: name
+service: api-compras
+
+provider:
+  name: aws
+  runtime: python3.10
+  memorySize: 1024
+  timeout: 30
+  iam:
+    role: arn:aws:iam::496585850746:role/LabRole 
+  environment:
+    COMPRAS_TABLE: t_compras_${sls:stage}
+    TOKENS_TABLE: t_tokens_acceso-${sls:stage}
+
+functions:
+  RegistrarCompra:
+    handler: src/RegistrarCompra.handler
+    events:
+      - http:
+          path: compras/registrar
+          method: post
+          cors: true
+          integration: lambda
+          request:
+            template:
+              application/json: |
+                {
+                  "headers": {
+                    #foreach($h in $input.params().header.keySet())
+                    "$h":"$util.escapeJavaScript($input.params().header.get($h))"#if($foreach.hasNext),#end
+                    #end
+                  },
+                  "body": $input.json('$')
+                }
+          response:
+            statusCodes:
+              200:
+                pattern: ''
+                template: $input.body
+
+  ListarCompras:
+    handler: src/ListarCompras.handler
+    events:
+      - http:
+          path: compras/listar
+          method: get
+          cors: true
+          integration: lambda
+          request:
+            template:
+              application/json: |
+                {
+                  "headers": {
+                    #foreach($h in $input.params().header.keySet())
+                    "$h":"$util.escapeJavaScript($input.params().header.get($h))"#if($foreach.hasNext),#end
+                    #end
+                  }
+                }
+          response:
+            statusCodes:
+              200:
+                pattern: ''
+                template: $input.body
+
+resources:
+  Resources:
+    ComprasDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: t_compras_${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: tenant_id
+            AttributeType: S
+          - AttributeName: alumno_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenant_id
+            KeyType: HASH
+          - AttributeName: alumno_id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
