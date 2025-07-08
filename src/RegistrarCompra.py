@@ -1,5 +1,5 @@
 import boto3, uuid, json, datetime
-from validarToken import validar_token
+from src.validarToken import validar_token
 
 dynamo = boto3.resource('dynamodb')
 tabla = dynamo.Table('t_compras-dev')  # usar ${stage} si deseas dinámico
