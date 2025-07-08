@@ -7,7 +7,7 @@ from src.validarToken import validar_token
 
 # Recurso DynamoDB
 dynamodb = boto3.resource('dynamodb')
-tabla = dynamodb.Table('t_compras-dev')  # Cambia a tu stage si es necesario
+tabla = dynamodb.Table('t_compras_dev')  # Cambia a tu stage si es necesario
 
 def handler(event, context):
     try:

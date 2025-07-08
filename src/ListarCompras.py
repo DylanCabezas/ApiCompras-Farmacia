@@ -3,7 +3,7 @@ import json
 from src.validarToken import validar_token
 
 dynamodb = boto3.resource('dynamodb')
-tabla = dynamodb.Table('t_compras-dev')  # Ajusta según tu stage
+tabla = dynamodb.Table('t_compras_dev')  # Ajusta según tu stage
 
 def handler(event, context):
     try:
