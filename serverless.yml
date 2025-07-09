@@ -6,11 +6,13 @@ provider:
   runtime: python3.10
   memorySize: 1024
   timeout: 30
+  region: us-east-1
   iam:
-    role: arn:aws:iam::496585850746:role/LabRole 
+    role: arn:aws:iam::496585850746:role/LabRole  # usa tu LabRole
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
+    S3_BUCKET: farmacia-compras
 
 functions:
   RegistrarCompra:
@@ -61,6 +63,18 @@ functions:
               200:
                 pattern: ''
                 template: $input.body
+
+  ActualizarCompras:
+    handler: src/ActualizarCompras.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - ComprasDynamoDBTable
+              - StreamArn
+          batchSize: 1
+          startingPosition: LATEST
 
 resources:
   Resources:
