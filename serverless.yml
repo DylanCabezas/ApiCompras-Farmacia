@@ -8,11 +8,12 @@ provider:
   timeout: 30
   region: us-east-1
   iam:
-    role: arn:aws:iam::496585850746:role/LabRole  # usa tu LabRole
+    role: arn:aws:iam::496585850746:role/LabRole
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
     S3_BUCKET: farmacia-compras
+    GLUE_CRAWLER_NAME: compras-crawler
 
 functions:
   RegistrarCompra:
@@ -75,6 +76,16 @@ functions:
               - StreamArn
           batchSize: 1
           startingPosition: LATEST
+
+  EjecutarCrawler:
+    handler: src/EjecutarCrawler.handler
+    events:
+      - s3:
+          bucket: farmacia-compras
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: compras/
+            - suffix: .json
 
 resources:
   Resources:
