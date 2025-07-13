@@ -1,6 +1,9 @@
 org: dylancabezas
 service: api-compras
 
+plugins:
+  - serverless-aws-documentation
+
 provider:
   name: aws
   runtime: python3.10
@@ -40,6 +43,21 @@ functions:
               200:
                 pattern: ''
                 template: $input.body
+          documentation:
+            summary: "Registrar una compra"
+            description: "Recibe una compra y la guarda en DynamoDB"
+            requestHeaders:
+              - name: Authorization
+                description: Token de autorización Bearer
+                required: true
+                type: string
+            requestModels:
+              "application/json": Compra
+            responseModels:
+              "application/json": Compra
+            methodResponses:
+              - statusCode: 200
+                description: "Compra registrada correctamente"
 
   ListarCompras:
     handler: src/ListarCompras.handler
@@ -64,6 +82,17 @@ functions:
               200:
                 pattern: ''
                 template: $input.body
+          documentation:
+            summary: "Listar compras"
+            description: "Devuelve todas las compras del usuario autenticado"
+            requestHeaders:
+              - name: Authorization
+                description: Token Bearer
+                required: true
+                type: string
+            methodResponses:
+              - statusCode: 200
+                description: "Lista de compras del usuario"
 
   ActualizarCompras:
     handler: src/ActualizarCompras.handler
@@ -106,3 +135,40 @@ resources:
         BillingMode: PAY_PER_REQUEST
         StreamSpecification:
           StreamViewType: NEW_IMAGE
+
+custom:
+  documentation:
+    version: '1.0.0'
+    title: 'API Compras - Farmacia'
+    description: 'Microservicio para registrar y consultar compras'
+    models:
+      - name: Producto
+        contentType: 'application/json'
+        schema:
+          type: object
+          properties:
+            codigo:
+              type: string
+            nombre:
+              type: string
+            precio:
+              type: number
+            cantidad:
+              type: number
+      - name: Compra
+        contentType: 'application/json'
+        schema:
+          type: object
+          properties:
+            tenant_id:
+              type: string
+            alumno_id:
+              type: string
+            productos:
+              type: array
+              items:
+                $ref: '#/components/schemas/Producto'
+            total:
+              type: number
+            fecha:
+              type: string
