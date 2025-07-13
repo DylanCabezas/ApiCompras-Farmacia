@@ -35,11 +35,6 @@ functions:
                   },
                   "body": $input.json('$')
                 }
-          response:
-            statusCodes:
-              200:
-                pattern: ''
-                template: $input.body
 
   ListarCompras:
     handler: src/ListarCompras.handler
@@ -59,11 +54,6 @@ functions:
                     #end
                   }
                 }
-          response:
-            statusCodes:
-              200:
-                pattern: ''
-                template: $input.body
 
   ActualizarCompras:
     handler: src/ActualizarCompras.handler
@@ -92,6 +82,14 @@ functions:
     events:
       - http:
           path: docs
+          method: get
+          cors: true
+
+  DocsUI:
+    handler: src/DocsUI.handler
+    events:
+      - http:
+          path: docs-ui
           method: get
           cors: true
 
