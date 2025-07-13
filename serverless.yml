@@ -113,6 +113,17 @@ resources:
         StreamSpecification:
           StreamViewType: NEW_IMAGE
 
+    S3BucketFarmaciaCompras:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        BucketName: farmacia-compras-dc-${sls:stage}
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+
 package:
   include:
     - src/openapi.yaml
