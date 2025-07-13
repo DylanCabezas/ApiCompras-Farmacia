@@ -5,7 +5,7 @@ info:
   description: Microservicio para registrar y listar compras por usuario autenticado
 
 servers:
-  - url: https://<f2h3buxe11>.execute-api.us-east-1.amazonaws.com/dev
+  - url: https://f2h3buxe11.execute-api.us-east-1.amazonaws.com/dev
 
 paths:
   /compras/registrar:
