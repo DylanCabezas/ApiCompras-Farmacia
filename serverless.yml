@@ -12,7 +12,7 @@ provider:
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
-    S3_BUCKET: farmacia-compras
+    S3_BUCKET: farmacia-compras-dc
     GLUE_CRAWLER_NAME: compras-crawler
 
 functions:
@@ -81,7 +81,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: farmacia-compras
+          bucket: farmacia-compras-dc
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
