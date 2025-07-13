@@ -1,0 +1,83 @@
+openapi: 3.0.1
+info:
+  title: API Compras - Farmacia
+  version: 1.0.0
+  description: Microservicio para registrar y listar compras por usuario autenticado
+
+servers:
+  - url: https://<f2h3buxe11>.execute-api.us-east-1.amazonaws.com/dev
+
+paths:
+  /compras/registrar:
+    post:
+      summary: Registrar nueva compra
+      description: Registra una compra con productos y total
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Compra'
+      responses:
+        '200':
+          description: Compra registrada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Compra'
+
+  /compras/listar:
+    get:
+      summary: Listar compras del usuario
+      description: Devuelve la lista de compras del usuario autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de compras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Compra'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: UUID
+
+  schemas:
+    Producto:
+      type: object
+      properties:
+        codigo:
+          type: string
+        nombre:
+          type: string
+        precio:
+          type: number
+        cantidad:
+          type: number
+
+    Compra:
+      type: object
+      properties:
+        tenant_id:
+          type: string
+        alumno_id:
+          type: string
+        compra_id:
+          type: string
+        productos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Producto'
+        total:
+          type: number
+        fecha:
+          type: string
