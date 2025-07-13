@@ -2,8 +2,10 @@ import os
 
 def handler(event, context):
     try:
+        # Ruta absoluta al archivo YAML
         ruta = os.path.join(os.path.dirname(__file__), 'openapi.yaml')
-        with open(ruta, 'r') as f:
+        
+        with open(ruta, 'r', encoding='utf-8') as f:
             contenido = f.read()
 
         return {
