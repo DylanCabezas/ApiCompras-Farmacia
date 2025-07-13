@@ -8,7 +8,7 @@ provider:
   timeout: 30
   region: us-east-1
   iam:
-    role: arn:aws:iam::496585850746:role/LabRole
+    role: arn:aws:iam::744127473797:role/LabRole
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
