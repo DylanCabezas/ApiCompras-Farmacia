@@ -1,9 +1,6 @@
 org: dylancabezas
 service: api-compras
 
-plugins:
-  - serverless-aws-documentation
-
 provider:
   name: aws
   runtime: python3.10
