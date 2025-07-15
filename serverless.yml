@@ -8,14 +8,13 @@ provider:
   memorySize: 1024
   timeout: 30
 
-  # ✅ Usa roles ya existentes (LabRole)
   deploymentRole: arn:aws:iam::744127473797:role/LabRole
   role: arn:aws:iam::744127473797:role/LabRole
 
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
-    S3_BUCKET: farmacia-compras-dc-${sls:stage}
+    S3_BUCKET: compras-dc-farm-${sls:stage}
     GLUE_CRAWLER_NAME: compras-crawler-${sls:stage}
 
 functions:
@@ -51,7 +50,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: farmacia-compras-dc-${sls:stage}
+          bucket: compras-dc-farm-${sls:stage}
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
@@ -61,7 +60,7 @@ functions:
     handler: src/CargarComprasBatch.handler
     events:
       - s3:
-          bucket: farmacia-compras-dc-${sls:stage}
+          bucket: compras-dc-farm-${sls:stage}
           event: s3:ObjectCreated:*
           rules:
             - prefix: cargas/
@@ -103,11 +102,11 @@ resources:
         StreamSpecification:
           StreamViewType: NEW_IMAGE
 
-    S3BucketFarmaciaCompras:
+    S3BucketComprasFarm:
       Type: AWS::S3::Bucket
       DeletionPolicy: Retain
       Properties:
-        BucketName: farmacia-compras-dc-${sls:stage}
+        BucketName: compras-dc-farm-${sls:stage}
         PublicAccessBlockConfiguration:
           BlockPublicAcls: false
           BlockPublicPolicy: false
