@@ -4,9 +4,9 @@ service: api-compras
 provider:
   name: aws
   runtime: python3.10
+  region: us-east-1
   memorySize: 1024
   timeout: 30
-  region: us-east-1
   iam:
     role: arn:aws:iam::744127473797:role/LabRole
   environment:
@@ -23,18 +23,6 @@ functions:
           path: compras/registrar
           method: post
           cors: true
-          integration: lambda
-          request:
-            template:
-              application/json: |
-                {
-                  "headers": {
-                    #foreach($h in $input.params().header.keySet())
-                    "$h":"$util.escapeJavaScript($input.params().header.get($h))"#if($foreach.hasNext),#end
-                    #end
-                  },
-                  "body": $input.json('$')
-                }
 
   ListarCompras:
     handler: src/ListarCompras.handler
@@ -43,17 +31,6 @@ functions:
           path: compras/listar
           method: get
           cors: true
-          integration: lambda
-          request:
-            template:
-              application/json: |
-                {
-                  "headers": {
-                    #foreach($h in $input.params().header.keySet())
-                    "$h":"$util.escapeJavaScript($input.params().header.get($h))"#if($foreach.hasNext),#end
-                    #end
-                  }
-                }
 
   ActualizarCompras:
     handler: src/ActualizarCompras.handler
@@ -75,6 +52,16 @@ functions:
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
+            - suffix: .json
+
+  CargarComprasBatch:
+    handler: src/CargarComprasBatch.handler
+    events:
+      - s3:
+          bucket: farmacia-compras-dc-${sls:stage}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: cargas/
             - suffix: .json
 
   Docs:
