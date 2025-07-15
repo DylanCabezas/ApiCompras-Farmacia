@@ -14,7 +14,7 @@ provider:
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
-    S3_BUCKET: compras-dc-farm-${sls:stage}
+    S3_BUCKET: compras-dc-farm2-${sls:stage}
     GLUE_CRAWLER_NAME: compras-crawler-${sls:stage}
 
 functions:
@@ -50,7 +50,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: compras-dc-farm-${sls:stage}
+          bucket: compras-dc-farm2-${sls:stage}
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
@@ -60,7 +60,7 @@ functions:
     handler: src/CargarComprasBatch.handler
     events:
       - s3:
-          bucket: compras-dc-farm-${sls:stage}
+          bucket: compras-dc-farm2-${sls:stage}
           event: s3:ObjectCreated:*
           rules:
             - prefix: cargas/
@@ -106,7 +106,7 @@ resources:
       Type: AWS::S3::Bucket
       DeletionPolicy: Retain
       Properties:
-        BucketName: compras-dc-farm-${sls:stage}
+        BucketName: compras-dc-farm2-${sls:stage}
         PublicAccessBlockConfiguration:
           BlockPublicAcls: false
           BlockPublicPolicy: false
