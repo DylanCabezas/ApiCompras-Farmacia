@@ -6,14 +6,13 @@ provider:
   runtime: python3.10
   region: us-east-1
   memorySize: 1024
-  timeout: 30
-  deploymentRole: arn:aws:iam::744127473797:role/LabRole
+  timeout: 29
   iam:
     role: arn:aws:iam::744127473797:role/LabRole
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
-    S3_BUCKET: compras-dc-farm456-fm-${sls:stage}
+    S3_BUCKET: compras-dc-farm789-${sls:stage}
     GLUE_CRAWLER_NAME: compras-crawler-${sls:stage}
 
 functions:
@@ -49,7 +48,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: compras-dc-farm456-fm-${sls:stage}
+          bucket: compras-dc-farm789-${sls:stage}
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
@@ -59,7 +58,7 @@ functions:
     handler: src/CargarComprasBatch.handler
     events:
       - s3:
-          bucket: compras-dc-farm456-fm-${sls:stage}
+          bucket: compras-dc-farm789-${sls:stage}
           event: s3:ObjectCreated:*
           rules:
             - prefix: cargas/
@@ -105,7 +104,7 @@ resources:
       Type: AWS::S3::Bucket
       DeletionPolicy: Retain
       Properties:
-        BucketName: compras-dc-farm456-fm-${sls:stage}
+        BucketName: compras-dc-farm789-${sls:stage}
         PublicAccessBlockConfiguration:
           BlockPublicAcls: false
           BlockPublicPolicy: false
