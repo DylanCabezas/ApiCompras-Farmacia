@@ -8,8 +8,9 @@ provider:
   memorySize: 1024
   timeout: 30
 
-  # Rol usado solo para desplegar recursos (CloudFormation, Lambda, S3, etc.)
+  # ✅ Usa roles ya existentes (LabRole)
   deploymentRole: arn:aws:iam::744127473797:role/LabRole
+  role: arn:aws:iam::744127473797:role/LabRole
 
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
