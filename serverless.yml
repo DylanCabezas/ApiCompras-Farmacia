@@ -7,8 +7,10 @@ provider:
   region: us-east-1
   memorySize: 1024
   timeout: 30
-  iam:
-    role: arn:aws:iam::744127473797:role/LabRole
+
+  # Rol usado solo para desplegar recursos (CloudFormation, Lambda, S3, etc.)
+  deploymentRole: arn:aws:iam::744127473797:role/LabRole
+
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
