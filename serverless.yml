@@ -6,7 +6,7 @@ provider:
   runtime: python3.10
   region: us-east-1
   memorySize: 1024
-  timeout: 29
+  timeout: 30
   iam:
     role: arn:aws:iam::744127473797:role/LabRole
     deploymentRole: arn:aws:iam::744127473797:role/LabRole
