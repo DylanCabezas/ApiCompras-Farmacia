@@ -103,7 +103,7 @@ resources:
 
     S3BucketFarmaciaCompras:
       Type: AWS::S3::Bucket
-      DeletionPolicy: Retain
+      DeletionPolicy: Delete
       Properties:
         BucketName: farmacia-compras-dc-456-${sls:stage}
         PublicAccessBlockConfiguration:
