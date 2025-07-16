@@ -86,20 +86,33 @@ resources:
     ComprasDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: t_compras_${sls:stage}
+        TableName: ${self:provider.environment.COMPRAS_TABLE}
         AttributeDefinitions:
+          - AttributeName: alumno_id
+            AttributeType: S
+          - AttributeName: compra_id
+            AttributeType: S
           - AttributeName: tenant_id
             AttributeType: S
-          - AttributeName: alumno_id
+          - AttributeName: fecha
             AttributeType: S
         KeySchema:
-          - AttributeName: tenant_id
-            KeyType: HASH
           - AttributeName: alumno_id
+            KeyType: HASH
+          - AttributeName: compra_id
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         StreamSpecification:
           StreamViewType: NEW_IMAGE
+        GlobalSecondaryIndexes:
+          - IndexName: tenant-fecha-index
+            KeySchema:
+              - AttributeName: tenant_id
+                KeyType: HASH
+              - AttributeName: fecha
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
 
     S3BucketFarmaciaCompras:
       Type: AWS::S3::Bucket
@@ -111,6 +124,20 @@ resources:
           BlockPublicPolicy: false
           IgnorePublicAcls: false
           RestrictPublicBuckets: false
+          
+    ComprasCrawler:
+      Type: AWS::Glue::Crawler
+      DependsOn: S3BucketFarmaciaCompras
+      Properties:
+        Name: ${self:provider.environment.GLUE_CRAWLER_NAME}
+        Role: ${self:provider.iam.role}
+        DatabaseName: compras_database_${sls:stage}
+        Targets:
+          S3Targets:
+            - Path: s3://${self:provider.environment.S3_BUCKET}/compras/
+        SchemaChangePolicy:
+          UpdateBehavior: LOG
+          DeleteBehavior: LOG
 
 package:
   include:
