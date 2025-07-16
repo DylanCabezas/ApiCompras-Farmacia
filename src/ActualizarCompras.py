@@ -1,9 +1,12 @@
 import boto3
+import os
 import json
 from decimal import Decimal
 
+# Obtener el nombre del bucket desde la variable de entorno
+bucket_name = os.environ['S3_BUCKET']
+
 s3 = boto3.client("s3")
-bucket_name = "farmacia-compras-dc-456-${sls:stage}"  # nombre real de tu bucket
 
 def deserialize(attr):
     tipo = list(attr.keys())[0]
@@ -56,6 +59,7 @@ def handler(event, context):
         }
 
     except Exception as e:
+        print("❌ Error:", str(e))
         return {
             'statusCode': 500,
             'body': json.dumps({'error': str(e)})
