@@ -3,7 +3,7 @@ import json
 from decimal import Decimal
 
 s3 = boto3.client("s3")
-bucket_name = "farmacia-compras-dc"  # nombre real de tu bucket
+bucket_name = "farmacia-compras-dc-456-${sls:stage}"  # nombre real de tu bucket
 
 def deserialize(attr):
     tipo = list(attr.keys())[0]
