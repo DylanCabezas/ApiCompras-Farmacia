@@ -1,5 +1,5 @@
 org: dylancabezas
-service: api-compras-2
+service: api-compras-farmacia
 
 provider:
   name: aws
