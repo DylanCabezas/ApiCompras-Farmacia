@@ -1,5 +1,5 @@
 org: dylancabezas
-service: api-compras
+service: api-compras-2
 
 provider:
   name: aws
@@ -9,6 +9,7 @@ provider:
   timeout: 29
   iam:
     role: arn:aws:iam::744127473797:role/LabRole
+    deploymentRole: arn:aws:iam::744127473797:role/LabRole
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
@@ -102,6 +103,7 @@ resources:
 
     S3BucketFarmaciaCompras:
       Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
       Properties:
         BucketName: farmacia-compras-dc-456-${sls:stage}
         PublicAccessBlockConfiguration:
