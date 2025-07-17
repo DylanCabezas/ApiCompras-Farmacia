@@ -49,7 +49,7 @@ functions:
   handler: src/EjecutarCrawler.handler
   events:
     - s3:
-        bucket: farmacia-compras-dc1-${sls:stage}  # nombre real del bucket
+        bucket: s3bucketfarmaciacompras2dc
         event: s3:ObjectCreated:*
         rules:
           - prefix: compras/
