@@ -49,7 +49,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: s3bucketfarmaciacompras 
+          bucket: s3bucketfarmaciacompras2dc
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
@@ -59,7 +59,7 @@ functions:
     handler: src/CargarComprasBatch.handler
     events:
       - s3:
-          bucket: s3bucketfarmaciacompras 
+          bucket: s3bucketfarmaciacompras2dc
           event: s3:ObjectCreated:*
           rules:
             - prefix: cargas/
@@ -114,7 +114,7 @@ resources:
             Projection:
               ProjectionType: ALL
 
-    s3bucketfarmaciacompras:
+    s3bucketfarmaciacompras2dc:
       Type: AWS::S3::Bucket
       DeletionPolicy: Delete
       Properties:
@@ -127,7 +127,7 @@ resources:
           
     ComprasCrawler:
       Type: AWS::Glue::Crawler
-      DependsOn: s3bucketfarmaciacompras
+      DependsOn: s3bucketfarmaciacompras2dc
       Properties:
         Name: ${self:provider.environment.GLUE_CRAWLER_NAME}
         Role: ${self:provider.iam.role}
