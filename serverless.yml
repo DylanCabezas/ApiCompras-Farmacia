@@ -1,6 +1,5 @@
 org: dylancabezas
-service: api-compras-farmacia-dc
-
+service: api-compras-farmacia-dc456
 provider:
   name: aws
   runtime: python3.10
@@ -13,7 +12,7 @@ provider:
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
-    S3_BUCKET: farmacia-compras-dc1-${sls:stage}
+    S3_BUCKET: farmacia-compras-dylancabezas2-${sls:stage}
     GLUE_CRAWLER_NAME: compras-crawler-${sls:stage}
 
 functions:
@@ -49,7 +48,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: s3bucketfarmaciacompras2dc
+          bucket: s3bucketfarmaciacompras 
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
@@ -59,7 +58,7 @@ functions:
     handler: src/CargarComprasBatch.handler
     events:
       - s3:
-          bucket: s3bucketfarmaciacompras2dc
+          bucket: s3bucketfarmaciacompras 
           event: s3:ObjectCreated:*
           rules:
             - prefix: cargas/
@@ -114,11 +113,11 @@ resources:
             Projection:
               ProjectionType: ALL
 
-    s3bucketfarmaciacompras2dc:
+    s3bucketfarmaciacompras:
       Type: AWS::S3::Bucket
       DeletionPolicy: Delete
       Properties:
-        BucketName: farmacia-compras-dc1-${sls:stage}
+        BucketName: farmacia-compras-dylancabezas2-${sls:stage}
         PublicAccessBlockConfiguration:
           BlockPublicAcls: false
           BlockPublicPolicy: false
@@ -127,7 +126,7 @@ resources:
           
     ComprasCrawler:
       Type: AWS::Glue::Crawler
-      DependsOn: s3bucketfarmaciacompras2dc
+      DependsOn: s3bucketfarmaciacompras
       Properties:
         Name: ${self:provider.environment.GLUE_CRAWLER_NAME}
         Role: ${self:provider.iam.role}
