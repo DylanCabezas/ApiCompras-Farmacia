@@ -49,7 +49,7 @@ functions:
     handler: src/EjecutarCrawler.handler
     events:
       - s3:
-          bucket: s3bucketfarmaciacompras 
+          bucket: s3bucketfarmaciacomprasdc777
           event: s3:ObjectCreated:*
           rules:
             - prefix: compras/
@@ -59,7 +59,7 @@ functions:
     handler: src/CargarComprasBatch.handler
     events:
       - s3:
-          bucket: s3bucketfarmaciacompras 
+          bucket: s3bucketfarmaciacomprasdc777
           event: s3:ObjectCreated:*
           rules:
             - prefix: cargas/
@@ -114,7 +114,7 @@ resources:
             Projection:
               ProjectionType: ALL
 
-    s3bucketfarmaciacompras:
+    s3bucketfarmaciacomprasdc777:
       Type: AWS::S3::Bucket
       DeletionPolicy: Delete
       Properties:
