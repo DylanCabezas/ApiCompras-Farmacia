@@ -7,8 +7,8 @@ provider:
   memorySize: 1024
   timeout: 30
   iam:
-    role: arn:aws:iam::620629184861:role/LabRole
-    deploymentRole: arn:aws:iam::620629184861:role/LabRole
+    role: arn:aws:iam::744127473797:role/LabRole
+    deploymentRole: arn:aws:iam::744127473797:role/LabRole
   environment:
     COMPRAS_TABLE: t_compras_${sls:stage}
     TOKENS_TABLE: t_tokens_acceso-${sls:stage}
