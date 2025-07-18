@@ -53,7 +53,6 @@ def handler(event, context):
 
         item = {
             'tenant_id': payload['tenant_id'],
-            'alumno_id': payload['alumno_id'],
             'compra_id': compra_id,
             'fecha': fecha,
             'productos': productos_decimal,
@@ -69,7 +68,6 @@ def handler(event, context):
                 'message': 'Compra registrada',
                 'data': {
                     'tenant_id': item['tenant_id'],
-                    'alumno_id': item['alumno_id'],
                     'compra_id': item['compra_id'],
                     'fecha': item['fecha'],
                     'productos': [
